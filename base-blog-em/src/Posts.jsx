@@ -17,7 +17,9 @@ export function Posts() {
 
   // const query = useQuery({ queryKey: ['posts'], queryFn: fetchPosts });
 
-  const { data, isLoading, isError, error } = useQuery(['posts'], fetchPosts);
+  const { data, isLoading, isError, error } = useQuery(['posts'], fetchPosts, {
+    staleTime: 1000,
+  });
   if (isLoading) return <h3> Loading... </h3>;
   if (isError) return <h3> Error: {error.message} </h3>;
 
