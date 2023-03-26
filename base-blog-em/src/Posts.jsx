@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { PostDetail } from './PostDetail';
 const maxPostPage = 10;
 
-async function fetchPosts() {
+async function fetchPosts(page) {
   const response = await fetch(
-    'https://jsonplaceholder.typicode.com/posts?_limit=10&_page=0'
+    'https://jsonplaceholder.typicode.com/posts?_limit=10&_page=' + page
   );
   return response.json();
 }
@@ -17,9 +17,13 @@ export function Posts() {
 
   // const query = useQuery({ queryKey: ['posts'], queryFn: fetchPosts });
 
-  const { data, isLoading, isError, error } = useQuery(['posts'], fetchPosts, {
-    staleTime: 1000,
-  });
+  const { data, isLoading, isError, error } = useQuery(
+    ['posts', currentPage],
+    () => fetchPosts(currentPage),
+    {
+      staleTime: 1000,
+    }
+  );
   if (isLoading) return <h3> Loading... </h3>;
   if (isError) return <h3> Error: {error.message} </h3>;
 
@@ -37,11 +41,21 @@ export function Posts() {
         ))}
       </ul>
       <div className='pages'>
-        <button disabled onClick={() => {}}>
+        <button
+          disabled={currentPage === 0}
+          onClick={() => {
+            setCurrentPage(currentPage - 1);
+          }}
+        >
           Previous page
         </button>
         <span>Page {currentPage + 1}</span>
-        <button disabled onClick={() => {}}>
+        <button
+          disabled={currentPage === maxPostPage - 1}
+          onClick={() => {
+            setCurrentPage(currentPage + 1);
+          }}
+        >
           Next page
         </button>
       </div>
